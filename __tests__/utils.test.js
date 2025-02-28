@@ -1,5 +1,7 @@
 const {
-  convertTimestampToDate
+  convertTimestampToDate,
+  formatComments,
+  articleLookup
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -38,3 +40,98 @@ describe("convertTimestampToDate", () => {
   });
 });
 
+describe("Article Lookup", () => {
+  describe("Functionality Tests", () => {
+    test("returns an empty object if passed an empty array", () =>{
+      expect(articleLookup([])).toEqual({});
+    });
+    test("converts an array of article_id and title properties to a title and article_id look up object", () => {
+      const articleData = [ { article_id: 1, title: 'Living in the shadow of a great man' } ] ;
+      expect(articleLookup(articleData)).toEqual({'Living in the shadow of a great man': 1})
+    })
+    test("returns multiple title property lookups if passed an array with multiple objects", () => {
+      const articleData = [ 
+        { article_id: 1, title: 'Living in the shadow of a great man' },
+        { article_id: 2, title: 'Sony Vaio; or, The Laptop' },
+        { article_id: 3, title: 'Eight pug gifs that remind me of mitch' },
+       ] ;
+      expect(articleLookup(articleData)).toEqual(
+        {'Living in the shadow of a great man': 1,
+        'Sony Vaio; or, The Laptop': 2 ,
+        'Eight pug gifs that remind me of mitch': 3}
+      );
+    });
+
+  });
+  describe("Purity Tests", () => {
+    test("does not mutate the original array", () => {
+      const articleData = [ { article_id: 1, title: 'Living in the shadow of a great man' } ];
+      articleLookup(articleData);
+
+      expect(articleData).toEqual([ { article_id: 1, title: 'Living in the shadow of a great man' } ]);
+    });
+
+  })
+})
+
+describe("Format Comments", () => {
+  describe("Functionality Tests", () => {
+    test("returns an empty array if passed an empty array", () => {
+
+      expect(formatComments([],[])).toEqual([]);
+
+    });
+    test("converts an article_title property to an id", () => {
+      const comments = [{article_title: 'A'}];
+
+      const articleIds = [ { article_id: 6, title: 'A' } ];
+
+      expect(formatComments(comments, articleIds)).toEqual([ { article_id: 6} ] );
+    });
+
+    test("converts multiple article_title properties to IDs", () => {
+      const comments = [{ article_title: 'A' }, {article_title: 'Z'}]
+
+      const articleIds = [ { article_id: 6, title: 'A' }, { article_id: 7, title: 'Z' }]
+
+      expect(formatComments(comments, articleIds)).toEqual([{article_id: 6},{article_id: 7}])
+
+    })
+
+  });
+
+    describe("Purity Tests", () => {
+      test("does not modify the input array", () => {
+        const comments = [{article_title: 'A'}];
+
+        const articleIds = [ { article_id: 6, title: 'A' } ];
+
+        formatComments(comments, articleIds)
+
+        expect(comments).toEqual([{article_title: 'A'}] );
+      });
+      test("input arrays have a different reference to output array", () => {
+        const comments = [{article_title: 'A'}];
+
+        const articleIds = [ { article_id: 6, title: 'A' } ];
+
+        const result = formatComments(comments, articleIds)
+
+        expect(comments).not.toBe(result);
+        expect(articleIds).not.toBe(result);
+
+      });
+      test("the objects inside the input arrays have a different references to the output array", () => {
+        const comments = [{article_title: 'A'}];
+
+        const articleIds = [ { article_id: 6, title: 'A' } ];
+
+        const result = formatComments(comments, articleIds)
+
+        expect(comments[0]).not.toBe(result[0]);
+        expect(articleIds[0]).not.toBe(result[0]);
+
+      });
+
+  })
+})
