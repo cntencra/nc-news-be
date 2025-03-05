@@ -85,13 +85,12 @@ function seed({ topicData, userData, articleData, commentData }) {
         (topic, author, title, body, created_at, votes, article_img_url)
         VALUES
         %L
-        RETURNING article_id, title`, formatedArticleData
+        RETURNING *`, formatedArticleData
       )
 
       return db.query(insertStr);
     })
     .then(({ rows }) => {
-
       const formattedComments = formatComments(commentData,rows);
 
       const mappedComments = formattedComments.map((comment) => {

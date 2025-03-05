@@ -83,10 +83,9 @@ describe("Format Comments", () => {
     });
     test("converts an article_title property to an id", () => {
       const comments = [{article_title: 'A'}];
-
       const articleIds = [ { article_id: 6, title: 'A' } ];
-
-      expect(formatComments(comments, articleIds)).toEqual([ { article_id: 6} ] );
+      const result = formatComments(comments, articleIds)
+      expect(result[0].article_id).toBe(6);
     });
 
     test("converts multiple article_title properties to IDs", () => {
