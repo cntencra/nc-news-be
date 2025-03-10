@@ -4,7 +4,6 @@ const {
 
 exports.getTopics = async (request, response,next) => {
     try {
-
         const topics =  await fetchTopics();
 
         response.status(200).send({ topics });
