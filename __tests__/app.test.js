@@ -1,9 +1,11 @@
-const endpointsJson = require("../endpoints.json");
+const endpointsJson = require("../server/endpoints.json");
+const request = require("supertest")
+const app = require("../server/app")
 /* Set up your test imports here */
 
 /* Set up your beforeEach & afterAll functions here */
 
-describe.skip("GET /api", () => {
+describe("GET /api", () => {
   test("200: Responds with an object detailing the documentation for each endpoint", () => {
     return request(app)
       .get("/api")
@@ -13,3 +15,15 @@ describe.skip("GET /api", () => {
       });
   });
 });
+
+describe("ANY /notapath", () => {
+  test("404: responds with error message when path is not found", () => {
+    return request(app)
+      .get("/notapath")
+      .expect(404)
+      .then(( {body} ) => {
+        expect(body.msg).toBe('Path not found')
+      })
+  })
+
+})
