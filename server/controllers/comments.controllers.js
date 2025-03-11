@@ -17,8 +17,8 @@ exports.getArticleComments = async (request, response, next) => {
 exports.postArticleComment = async (request,response, next) => {
     try {
         const { article_id } = request.params;
-        const comment = await createArticleComment(article_id);
-        response.status(200).send({ comment });
+        const comment = await createArticleComment(article_id, request.body);
+        response.status(201).send({ comment });
         
     } catch (error) {
         next(error);
