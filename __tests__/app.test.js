@@ -215,3 +215,59 @@ describe("POST /api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("201: articles votes incremented, article returned", () => {
+    return request(app).patch(`/api/articles/1`)
+    .send({ inc_votes : 1})
+    .expect(201)
+    .then((response) => {
+      const { article_id, author, topic, title, body, created_at, votes, article_img_url } = response.body.article;
+      expect(article_id).toBe(1);
+      expect(typeof author).toBe('string');
+      expect(typeof topic).toBe('string');
+      expect(typeof title).toBe('string');
+      expect(typeof body).toBe('string');
+      expect(typeof created_at).toBe('string');
+      expect(votes).toBe(101);
+      expect(typeof article_img_url).toBe('string');
+    });
+  });
+
+  test("201: articles votes decremented", () => {
+    return request(app).patch(`/api/articles/1`)
+    .send({ inc_votes : -100})
+    .expect(201)
+    .then((response) => {
+      const { votes } = response.body.article;
+      expect(votes).toBe(0);
+    });
+  });
+
+  test("400: increment votes by ! typeof number", () => {
+    return request(app).patch(`/api/articles/1`)
+    .send({ inc_votes : 'hjg'})
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    });
+  })
+
+  test("400:  article_id = bananana | responds with 'Bad request' when passed an invalid article_id", () => {
+    return request(app).patch(`/api/articles/bananana`)
+    .send({ inc_votes : 1})
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    });
+  });
+
+  test("404: responds with 'Not found' when passed a valid article_id with no associated article article_id = 9999 / 22", () => {
+    return request(app).patch(`/api/articles/22`)
+    .send({ inc_votes : 1})
+    .expect(404)
+    .then(( { body }) => {
+      expect(body.msg).toBe("Resource not found")
+    });
+  });
+});
