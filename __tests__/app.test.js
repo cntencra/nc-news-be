@@ -156,7 +156,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test("200: adds a comment to comment table, responds with the added comment, author is a known author", () => {
+  test("201: adds a comment to comment table, responds with the added comment, author is a known author", () => {
     return request(app).post(`/api/articles/1/comments`)
     .send({
       votes: 0,
