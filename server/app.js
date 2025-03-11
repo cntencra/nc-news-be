@@ -14,7 +14,8 @@ const {
 
 const {
     getArticleComments,
-    postArticleComment
+    postArticleComment,
+    deleteComment
 } =require("./controllers/comments.controllers.js")
 
 const {
@@ -43,6 +44,8 @@ app.use(express.json());
 app.post(`/api/articles/:article_id/comments`, postArticleComment);
 
 app.patch(`/api/articles/:article_id`, patchArticle)
+
+app.delete(`/api/comments/:comment_id`, deleteComment)
 
 app.all('/*', (request, response) => {
     response.status(404).send({ msg: 'Path not found'});

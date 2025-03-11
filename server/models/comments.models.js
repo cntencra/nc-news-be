@@ -20,3 +20,9 @@ exports.createArticleComment = async (article_id, body) => {
         RETURNING *
         `, [votes, author, body.body, article_id])).rows[0];
 };
+
+exports.eliminateComment = async (comment_id) => {
+    await checkExists("comments", "comment_id", comment_id);
+    await db.query(`DELETE FROM comments WHERE comment_id = $1`,[comment_id]);
+    
+};

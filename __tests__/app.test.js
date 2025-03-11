@@ -271,3 +271,24 @@ describe("PATCH /api/articles/:article_id", () => {
     });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: no content", () => {
+    return request(app).delete(`/api/comments/2`)
+    .expect(204);
+  });
+  test("400:  content_id = bananananaan", () => {
+    return request(app).delete(`/api/comments/bananana`)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request');
+    });
+  });
+  test("404:  content_id = 9999", () => {
+    return request(app).delete(`/api/comments/9999`)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Resource not found');
+    });
+  });
+});
