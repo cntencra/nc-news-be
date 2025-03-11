@@ -8,7 +8,8 @@ const {
 
 const {
     getArticles,
-    getArticle
+    getArticle,
+    patchArticle
 } = require("./controllers/articles.controllers.js");
 
 const {
@@ -40,6 +41,8 @@ app.get(`/api/articles/:article_id/comments`, getArticleComments);
 app.use(express.json());
 
 app.post(`/api/articles/:article_id/comments`, postArticleComment);
+
+app.patch(`/api/articles/:article_id`, patchArticle)
 
 app.all('/*', (request, response) => {
     response.status(404).send({ msg: 'Path not found'});
