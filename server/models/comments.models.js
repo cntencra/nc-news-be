@@ -7,7 +7,16 @@ exports.fetchArticleComments = async (article_id) => {
     
 };
 
-exports.createArticleComment = async (article_id) => {
-    const comment = (await db.query(`INSERT INTO comments`)).rows;
-    return comment;
+exports.createArticleComment = async (article_id, body) => {
+   
+    const {votes, author} = body
+    await checkExists("articles", "article_id", article_id);
+    await checkExists("users", "username", author);
+    return (await db.query(`
+        INSERT INTO comments
+        (votes, author, body, article_id)
+        VALUES
+        ($1, $2, $3,$4)
+        RETURNING *
+        `, [votes, author, body.body, article_id])).rows[0];
 };
