@@ -7,7 +7,8 @@ const {
 } = require("./controllers/topics.controllers.js");
 
 const {
-    getArticles
+    getArticles,
+    getArticle
 } = require("./controllers/articles.controllers.js");
 
 const {
@@ -25,7 +26,9 @@ app.get(`/api`, (request, response) => {
 
 app.get(`/api/topics`, getTopics);
 
-app.get(`/api/articles/:article_id`, getArticles);
+app.get('/api/articles', getArticles);
+
+app.get(`/api/articles/:article_id`, getArticle);
 
 app.all('/*', (request, response) => {
     response.status(404).send({ msg: 'Path not found'});
