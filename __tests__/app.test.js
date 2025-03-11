@@ -153,12 +153,65 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
 
   });
-  test("400: responds with 'Bad request' when passed an invalid article_id", () => {
-    return request(app).get(`/api/articles/bananana/comments`)
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("200: adds a comment to comment table, responds with the added comment, author is a known author", () => {
+    return request(app).post(`/api/articles/1/comments`)
+    .send({
+      votes: 0,
+      author: "lurker",
+      body: "I have ceased to lurk"
+    })
+    .expect(201)
+    .then((response) => {
+      const { comment_id, votes, created_at, author, body, article_id } = response.body.comment;
+        expect(typeof comment_id).toBe('number');
+        expect(votes).toBe(0);
+        expect(typeof created_at).toBe('string');
+        expect(author).toBe("lurker");
+        expect(body).toBe("I have ceased to lurk");
+        expect(article_id).toBe(1);
+    });
+  });
+
+  test("400: responds with 'Bad request' when passed an invalid article_id, article_id = bananana", () => {
+    return request(app).post(`/api/articles/bananana/comments`)
     .expect(400)
     .then(({ body }) => {
       expect(body.msg).toBe('Bad request')
     });
+  });
 
+  test("404: responds with 'Not found' when passed an author that doesn't exist, {author: 'definitley not an author'}", () => {
+    return request(app).post(`/api/articles/1/comments`)
+    .send({
+      votes: 100,
+      author: "definitely not an author",
+      body: "Don't add me"
+    })
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Resource not found')
+    });
+  });
+
+  test("404: responds with 'Not found' when passed an incomplete body, missing {author:'I'm missing}", () => {
+    return request(app).post(`/api/articles/1/comments`)
+    .send({
+      body: "Don't add me"
+    })
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Resource not found')
+    });
+  });
+
+  test("404: responds with 'Not found' when passed a valid article_id with no associated article article_id = 9999 / 22", () => {
+    return request(app).post(`/api/articles/22/comments`)
+    .expect(404)
+    .then(( { body }) => {
+      expect(body.msg).toBe("Resource not found")
+    });
   });
 });
