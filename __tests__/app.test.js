@@ -110,6 +110,7 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
+
   test("200: responds with an array of comments", () => {
     return request(app).get(`/api/articles/9/comments`)
     .expect(200)
@@ -127,7 +128,24 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
   });
 
-  test("404: responds with 'Not found' when passed a valid article_id with no associated content", () => {
+  test("200: responds with an empty array when passed a valid article_id with no comments", () => {
+    return request(app).get(`/api/articles/13/comments`)
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.comments).toEqual([]);
+    });
+  });
+
+  test("400: responds with 'Bad request' when passed an invalid article_id", () => {
+    return request(app).get(`/api/articles/bananana/comments`)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    });
+
+  });
+
+  test("404: responds with 'Not found' when passed a valid article_id with no associated article", () => {
     return request(app).get(`/api/articles/9999/comments`)
     .expect(404)
     .then(( { body }) => {
