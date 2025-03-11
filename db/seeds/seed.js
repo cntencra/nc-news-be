@@ -168,7 +168,5 @@ function createComments() {
   )
 }
 
-    
-  //<< write your first query in here.
 
 module.exports = seed;
