@@ -1,6 +1,7 @@
 const {
     fetchArticles,
-    fetchArticle
+    fetchArticle,
+    fetchArticleComments
 } = require("../models/articles.models");
 
 exports.getArticles = async (request, response) => {
@@ -13,6 +14,17 @@ exports.getArticle = async (request, response, next) => {
         const { article_id } = request.params;
         const article = await fetchArticle(article_id);
         response.status(200).send({ article });
+    } catch (error) {
+        next(error);
+    };
+};
+
+exports.getArticleComments = async (request, response, next) => {
+    try {
+        const { article_id } = request.params;
+        const comments = await fetchArticleComments(article_id);
+        response.status(200).send({ comments });
+        
     } catch (error) {
         next(error);
     };
