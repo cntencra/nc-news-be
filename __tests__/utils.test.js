@@ -4,6 +4,14 @@ const {
   articleLookup
 } = require("../db/seeds/utils");
 
+const {
+  checkExists
+} = require("../server/utils");
+
+const db = require("../db/connection");
+const seed = require("../db/seeds/seed");
+const data = require("../db/data/test-data");
+
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;
@@ -134,3 +142,36 @@ describe("Format Comments", () => {
 
   })
 })
+
+describe("checkExists", () => {
+  beforeEach(() => {
+    return seed(data);
+  });
+  
+  afterAll(() => {
+    return db.end();
+  });
+
+  test("Returns undefined if the resource exists", () => {
+    const table = 'articles';
+    const column = 'article_id';
+    const value = 1;
+
+    checkExists(table, column, value)
+    .then((res) => {
+      expect(res).toBe(true);
+    })
+  });
+
+  test("Returns 'Resource not found' if the resource doesn't exist", () => {
+    const table = 'articles';
+    const column = 'article_id';
+    const value = 999999;
+
+    checkExists(table, column, value)
+    .then((res) => {
+      expect(res.status).toBe(404);
+      expect(res.msg).toBe("Resource not found");
+    })
+  });
+});
