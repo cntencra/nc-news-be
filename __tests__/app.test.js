@@ -92,6 +92,7 @@ describe("GET /api/articles", () => {
     .expect(200)
     .then(({ body }) => {
       expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy('created_at',{ descending: true })
       body.articles.forEach((article) => {
         const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = article;
         expect(typeof article_id).toBe('number');
@@ -104,8 +105,42 @@ describe("GET /api/articles", () => {
         expect(typeof comment_count).toBe('number');
         expect(body).toBe(undefined);
       });
-
-      expect(body.articles).toBeSortedBy('created_at',{ descending: true })
     });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: responds with an array of comments", () => {
+    return request(app).get(`/api/articles/9/comments`)
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.comments.length).toBe(2)
+      body.comments.forEach((comment) => {
+        const { comment_id, votes, created_at, author, body, article_id } = comment;
+        expect(typeof comment_id).toBe('number');
+        expect(typeof votes).toBe('number');
+        expect(typeof created_at).toBe('string');
+        expect(typeof author).toBe('string');
+        expect(typeof body).toBe('string');
+        expect(article_id).toBe(9);
+      });
+    });
+  });
+
+  test("404: responds with 'Not found' when passed a valid article_id with no associated content", () => {
+    return request(app).get(`/api/articles/9999/comments`)
+    .expect(404)
+    .then(( { body }) => {
+      expect(body.msg).toBe("Resource not found")
+    });
+
+  });
+  test("400: responds with 'Bad request' when passed an invalid article_id", () => {
+    return request(app).get(`/api/articles/bananana/comments`)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    });
+
   });
 });

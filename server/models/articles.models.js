@@ -21,3 +21,11 @@ exports.fetchArticle = async (article_id) => {
    
     return articles[0];
 };
+
+exports.fetchArticleComments = async (article_id) => {
+    const comments = (await db.query(`SELECT * FROM comments WHERE comments.article_id = $1`,[article_id])).rows
+    if (comments.length === 0) {
+        throw { status: 404, msg: "Resource not found" };
+    };
+    return comments;
+}
