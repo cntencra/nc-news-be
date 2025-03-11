@@ -1,4 +1,5 @@
 const db = require("../../db/connection")
+const { checkExists } = require("../utils");
 
 exports.fetchArticles = async () => {
     return (await db.query(`
@@ -14,10 +15,23 @@ exports.fetchArticles = async () => {
 };
 
 exports.fetchArticle = async (article_id) => {
-    const articles = (await db.query(`SELECT * FROM articles WHERE article_id =$1`, [article_id])).rows;
-    if (articles.length === 0) {
-        throw { status: 404, msg: "Resource not found" };
-    };
-   
-    return articles[0];
+    await checkExists('articles', 'article_id', article_id);
+    return (await db.query(`SELECT * FROM articles WHERE article_id =$1`, [article_id])).rows[0];
 };
+
+exports.amendArticle = async (article_id, votes) => {
+
+    if(typeof votes.inc_votes !== 'number') throw {status:400, msg: 'Bad request'};
+    await checkExists('articles', 'article_id', article_id);
+
+    const oldVotes = (await db.query(`SELECT votes FROM articles WHERE article_id = $1`, [article_id])).rows[0];
+
+    const queryStr = `
+    UPDATE articles
+    SET votes = $1
+    WHERE article_id = $2
+    RETURNING *`
+
+    return(await db.query(queryStr,[oldVotes.votes + votes.inc_votes, article_id])).rows[0]
+
+}
