@@ -8,9 +8,13 @@ const {
 
 const {
     getArticles,
-    getArticle,
-    getArticleComments
+    getArticle
 } = require("./controllers/articles.controllers.js");
+
+const {
+    getArticleComments,
+    postArticleComment
+} =require("./controllers/comments.controllers.js")
 
 const {
     handlePsqlErrors,
