@@ -37,6 +37,10 @@ app.get(`/api/articles/:article_id`, getArticle);
 
 app.get(`/api/articles/:article_id/comments`, getArticleComments);
 
+app.use(express.json());
+
+app.post(`/api/articles/:article_id/comments`, postArticleComment);
+
 app.all('/*', (request, response) => {
     response.status(404).send({ msg: 'Path not found'});
 });
