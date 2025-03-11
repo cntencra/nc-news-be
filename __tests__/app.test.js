@@ -52,11 +52,11 @@ describe("GET /api/topics", () => {
 
 describe("GET /api/articles/:article_id", () => {
   test("200: responds with an article when provided a valid article_id", () => {
-    return request(app).get(`/api/articles/1`)
+    return request(app).get(`/api/articles/13`)
     .expect(200)
     .then((response) => {
       const { article_id, author, topic, title, body, created_at, votes, article_img_url } = response.body.article;
-      expect(article_id).toBe(1);
+      expect(article_id).toBe(13);
       expect(typeof author).toBe('string');
       expect(typeof topic).toBe('string');
       expect(typeof title).toBe('string');
@@ -84,4 +84,28 @@ describe("GET /api/articles/:article_id", () => {
 
   });
 
+});
+
+describe("GET /api/articles", () => {
+  test("200: responds with an array of articles", () => {
+    return request(app).get(`/api/articles`)
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      body.articles.forEach((article) => {
+        const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = article;
+        expect(typeof article_id).toBe('number');
+        expect(typeof author).toBe('string');
+        expect(typeof topic).toBe('string');
+        expect(typeof title).toBe('string');
+        expect(typeof created_at).toBe('string');
+        expect(typeof votes).toBe('number');
+        expect(typeof article_img_url).toBe('string');
+        expect(typeof comment_count).toBe('number');
+        expect(body).toBe(undefined);
+      });
+
+      expect(body.articles).toBeSortedBy('created_at',{ descending: true })
+    });
+  });
 });
