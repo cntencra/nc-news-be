@@ -155,6 +155,22 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  test("200: responds with an array of users", () => {
+    return request(app).get(`/api/users`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.users.length).toBe(4);
+      body.users.forEach((user) => {
+        const { username, name, avatar_url } = user;
+        expect(typeof username).toBe('string');
+        expect(typeof name).toBe('string');
+        expect(typeof avatar_url).toBe('string');
+      });
+    });
+  });
+});
+
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds a comment to comment table, responds with the added comment, author is a known author", () => {
     return request(app).post(`/api/articles/1/comments`)

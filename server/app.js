@@ -16,7 +16,11 @@ const {
     getArticleComments,
     postArticleComment,
     deleteComment
-} =require("./controllers/comments.controllers.js")
+} =require("./controllers/comments.controllers.js");
+
+const {
+    getUsers
+} = require("./controllers/users.controllers.js");
 
 const {
     handlePsqlErrors,
@@ -38,6 +42,8 @@ app.get('/api/articles', getArticles);
 app.get(`/api/articles/:article_id`, getArticle);
 
 app.get(`/api/articles/:article_id/comments`, getArticleComments);
+
+app.get(`/api/users`, getUsers);
 
 app.use(express.json());
 
