@@ -4,9 +4,14 @@ const {
     amendArticle
 } = require("../models/articles.models");
 
-exports.getArticles = async (request, response) => {
-    const articles = await fetchArticles(request.query);
-    response.status(200).send({ articles });
+exports.getArticles = async (request, response, next) => {
+    try {
+        const articles = await fetchArticles(request.query);
+        response.status(200).send({ articles });
+    } catch (error) {
+        next(error);
+    }
+    
 };
 
 exports.getArticle = async (request, response, next) => {
