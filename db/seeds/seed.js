@@ -149,7 +149,7 @@ function createArticles() {
     title VARCHAR(200) NOT NULL,
     body TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    votes INT DEFAULT 0,
+    votes INT DEFAULT 0 NOT NULL,
     article_img_url VARCHAR(1000)
     )`
   )
@@ -162,7 +162,7 @@ function createComments() {
     article_id INT REFERENCES articles(article_id) NOT NULL,
     author VARCHAR(40) REFERENCES users(username) NOT NULL,
     body TEXT,
-    votes INT DEFAULT 0,
+    votes INT DEFAULT 0 NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`
   )
