@@ -14,11 +14,11 @@ exports.createArticleComment = async (article_id, body) => {
     await checkExists("users", "username", author);
     return (await db.query(`
         INSERT INTO comments
-        (votes, author, body, article_id)
+        (author, body, article_id)
         VALUES
-        ($1, $2, $3,$4)
+        ($1, $2, $3)
         RETURNING *
-        `, [votes, author, body.body, article_id])).rows[0];
+        `, [author, body.body, article_id])).rows[0];
 };
 
 exports.eliminateComment = async (comment_id) => {
