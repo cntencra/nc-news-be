@@ -3,8 +3,11 @@ const { checkExists } = require("../utils");
 const format = require("pg-format");
 
 exports.fetchArticles = async (queries) => {
-    const allowedInputs = ["asc", "desc"];
-    const { order } = queries;
+    const allowedOrder = ["asc", "desc"];
+    const { order, topic } = queries;
+
+    if (topic) await checkExists('topics', 'slug', topic);
+    
     let queryStr = `
         SELECT 
             articles.article_id, articles.author, articles.topic, 
@@ -12,10 +15,15 @@ exports.fetchArticles = async (queries) => {
             articles.article_img_url, CAST(COALESCE(COUNT(comments.comment_id),0) AS INT )AS  comment_count
 
         FROM articles
-        LEFT JOIN comments ON comments.article_id = articles.article_id
-        GROUP BY articles.article_id `
+        LEFT JOIN comments ON comments.article_id = articles.article_id `
+    
+    if(topic) {
+        queryStr += format(`WHERE topic =%L`,topic)
+    }
+
+    queryStr += `GROUP BY articles.article_id `
         
-    if(!allowedInputs.includes(order))    
+    if(!allowedOrder.includes(order))    
         queryStr += `ORDER BY articles.created_at DESC;`;
     else {
         queryStr += format(`ORDER BY articles.created_at %s`, order);
