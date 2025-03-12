@@ -60,6 +60,13 @@
       ]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "username": "user", "name": "Silent Bob", "avatar_url": "www.something.com/much_longer" }]
+    }
+  },
   
   "POST /api/articles/:article_id/comments" : {
   "description": "POSTs a comment to the comments table and serves a comment corresponding to the POSTed comment",
