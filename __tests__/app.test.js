@@ -159,9 +159,28 @@ describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds a comment to comment table, responds with the added comment, author is a known author", () => {
     return request(app).post(`/api/articles/1/comments`)
     .send({
-      votes: 0,
       author: "lurker",
       body: "I have ceased to lurk"
+    })
+    .expect(201)
+    .then((response) => {
+      const { comment_id, votes, created_at, author, body, article_id } = response.body.comment;
+        expect(typeof comment_id).toBe('number');
+        expect(votes).toBe(0);
+        expect(typeof created_at).toBe('string');
+        expect(author).toBe("lurker");
+        expect(body).toBe("I have ceased to lurk");
+        expect(article_id).toBe(1);
+    });
+  });
+
+  test("201: with additional unused keys", () => {
+    return request(app).post(`/api/articles/1/comments`)
+    .send({
+      author: "lurker",
+      body: "I have ceased to lurk",
+      unnecessary_key: "I am unnecessary",
+      very_unnecessary_key: "I am very unnecessary"
     })
     .expect(201)
     .then((response) => {
