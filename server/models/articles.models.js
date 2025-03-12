@@ -2,8 +2,10 @@ const db = require("../../db/connection")
 const { checkExists } = require("../utils");
 const format = require("pg-format");
 
-exports.fetchArticles = async () => {
-    return (await db.query(`
+exports.fetchArticles = async (queries) => {
+    const allowedInputs = ["asc", "desc"];
+    const { order } = queries;
+    let queryStr = `
         SELECT 
             articles.article_id, articles.author, articles.topic, 
             articles.title, articles.created_at, articles.votes, 
@@ -11,8 +13,14 @@ exports.fetchArticles = async () => {
 
         FROM articles
         LEFT JOIN comments ON comments.article_id = articles.article_id
-        GROUP BY articles.article_id
-        ORDER BY articles.created_at DESC;`)).rows
+        GROUP BY articles.article_id `
+        
+    if(!allowedInputs.includes(order))    
+        queryStr += `ORDER BY articles.created_at DESC;`;
+    else {
+        queryStr += format(`ORDER BY articles.created_at %s`, order);
+    }
+    return (await db.query(queryStr)).rows
 };
 
 exports.fetchArticle = async (article_id) => {
