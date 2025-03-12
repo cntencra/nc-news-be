@@ -92,8 +92,8 @@ describe("GET /api/articles", () => {
       return request(app).get(`/api/articles`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13)
-        expect(body.articles).toBeSortedBy('created_at',{ descending: true })
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true });
         body.articles.forEach((article) => {
           const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = article;
           expect(typeof article_id).toBe('number');
@@ -128,7 +128,60 @@ describe("GET /api/articles", () => {
       return request(app).get(`/api/articles?order=gibberish"DROP TABLE users;"`)
       .expect(200)
       .then(({body}) => {
-        expect(body.articles).toBeSortedBy('created_at',{ descending: true })
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true });
+      });
+    });
+  });
+  describe("filter by queries", () => {
+    test("200: filter by topic", () => {
+      return request(app).get(`/api/articles?topic=mitch`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(12);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe('mitch');
+        });
+      });
+    });
+    test("404: Resource not found topic=I am not a topic", () => {
+      return request(app).get(`/api/articles?topic=i_am_not_a_topic`)
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('Resource not found');
+      });
+    });
+  });
+
+  describe("generic queries", () => {
+    test("200 ?not_a_key = mitch return default behaviour", () => {
+      return request(app).get(`/api/articles?not_a_key=mitch`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true });
+      });
+    });
+    test("200: multiple queries ?order = desc & topic = mitch", () => {
+      return request(app).get(`/api/articles?order=asc&topic=mitch`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(12);
+        expect(body.articles).toBeSortedBy('created_at',{ descending: false });
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe('mitch');
+        });
+      });
+    });
+    test("200: multiple queries 1 valid 1 invalid", () => {
+      return request(app).get(`/api/articles?invalid_key=asc&topic=mitch`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(12);
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true });
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe('mitch');
+        });
       });
     });
   });
