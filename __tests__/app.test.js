@@ -83,7 +83,15 @@ describe("GET /api/articles/:article_id", () => {
     });
 
   });
-
+  describe("comment_count", () => {
+    test("200:responds with a comment count key", () => {
+      return request(app).get(`/api/articles/1`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.article.comment_count).toBe(11);
+      });
+    });
+  });
 });
 
 describe("GET /api/articles", () => {

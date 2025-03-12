@@ -33,7 +33,16 @@ exports.fetchArticles = async (queries) => {
 
 exports.fetchArticle = async (article_id) => {
     await checkExists('articles', 'article_id', article_id);
-    return (await db.query(`SELECT * FROM articles WHERE article_id =$1;`, [article_id])).rows[0];
+    const comment_count = (await db.query)
+    return (await db.query(`
+        SELECT 
+            articles.article_id, articles.author, articles.topic, articles.title, 
+            articles.body, articles.created_at, articles.votes, 
+            articles.article_img_url, CAST(COALESCE(COUNT(comments.comment_id),0) AS INT )AS  comment_count
+        FROM articles
+        LEFT JOIN comments ON comments.article_id = articles.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;`, [article_id])).rows[0];
 };
 
 exports.amendArticle = async (article_id, body) => {
