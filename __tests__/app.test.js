@@ -263,6 +263,24 @@ describe("PATCH /api/articles/:article_id", () => {
     });
   });
 
+  test("201: articles votes changed, extra keys ignored", () => {
+    return request(app).patch(`/api/articles/1`)
+    .send({inc_votes : 1, mo_keys: 56, even_mo_keys: 100})
+    .expect(201)
+    .then( ({body}) => {
+      expect(body.article.votes).toBe(101)
+    });
+  });
+
+  test("201: No keys / inc_votes missing, votes stays the same", () => {
+    return request(app).patch(`/api/articles/1`)
+    .send({})
+    .expect(201)
+    .then( ({body}) => {
+      expect(body.article.votes).toBe(100);
+    });
+  });
+
   test("400: increment votes by ! typeof number", () => {
     return request(app).patch(`/api/articles/1`)
     .send({ inc_votes : 'hjg'})
@@ -289,6 +307,7 @@ describe("PATCH /api/articles/:article_id", () => {
       expect(body.msg).toBe("Resource not found")
     });
   });
+  
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
