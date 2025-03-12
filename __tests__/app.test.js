@@ -87,23 +87,48 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("200: responds with an array of articles", () => {
-    return request(app).get(`/api/articles`)
-    .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
-      expect(body.articles).toBeSortedBy('created_at',{ descending: true })
-      body.articles.forEach((article) => {
-        const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = article;
-        expect(typeof article_id).toBe('number');
-        expect(typeof author).toBe('string');
-        expect(typeof topic).toBe('string');
-        expect(typeof title).toBe('string');
-        expect(typeof created_at).toBe('string');
-        expect(typeof votes).toBe('number');
-        expect(typeof article_img_url).toBe('string');
-        expect(typeof comment_count).toBe('number');
-        expect(body).toBe(undefined);
+  describe("articles", () => {
+    test("200: responds with an array of articles", () => {
+      return request(app).get(`/api/articles`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13)
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true })
+        body.articles.forEach((article) => {
+          const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = article;
+          expect(typeof article_id).toBe('number');
+          expect(typeof author).toBe('string');
+          expect(typeof topic).toBe('string');
+          expect(typeof title).toBe('string');
+          expect(typeof created_at).toBe('string');
+          expect(typeof votes).toBe('number');
+          expect(typeof article_img_url).toBe('string');
+          expect(typeof comment_count).toBe('number');
+          expect(body).toBe(undefined);
+        });
+      });
+    });
+  });
+  describe("sort_by queries", () => {
+    test("200:sort by created_at ascending", () => {
+      return request(app).get(`/api/articles?order=asc`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('created_at',{ descending: false });
+      });
+    });
+    test("200:sort by created_at descending", () => {
+      return request(app).get(`/api/articles?order=desc`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true });
+      });
+    });
+    test("200: order ?order=gibberish return default behaviour", () => {
+      return request(app).get(`/api/articles?order=gibberish"DROP TABLE users;"`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('created_at',{ descending: true })
       });
     });
   });
