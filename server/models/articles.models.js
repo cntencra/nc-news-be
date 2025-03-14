@@ -1,5 +1,8 @@
 const db = require("../../db/connection")
-const { checkExists } = require("../utils");
+const { 
+    checkExists,
+    paginationSql
+ } = require("../utils");
 const format = require("pg-format");
 
 exports.fetchArticles = async (queries) => {
@@ -20,7 +23,7 @@ exports.fetchArticles = async (queries) => {
     
     if(topic) {
         queryStr += format(`WHERE topic = %L`,topic)
-    }
+    };
 
     queryStr += `GROUP BY articles.article_id `
         
@@ -28,26 +31,15 @@ exports.fetchArticles = async (queries) => {
         queryStr += `ORDER BY articles.created_at DESC `;
     else {
         queryStr += format(`ORDER BY articles.created_at %s `, order);
-    }
-
-    const total_count = (await db.query(queryStr)).rows.length
-
-    if (limit || limit === '') {
-        let offset = 0
-        if(!isNaN(Number(p)) && !(p === '') && p >= 1) {
-            offset = Math.round(p) - 1;
-        };
-
-        if (isNaN(Number(limit)) || limit === '') {
-            queryStr += format(`LIMIT 10 OFFSET %L `,offset * 10);
-        } else {
-            queryStr += format(`LIMIT %L OFFSET %L `, limit, offset * limit);
-        };
     };
+
+    const total_count = (await db.query(queryStr)).rows.length;
+
+    queryStr += paginationSql(limit, p);
 
     const articles = ( await db.query(queryStr) ).rows;
     
-    return {articles, total_count}
+    return {articles, total_count};
 };
 
 exports.fetchArticle = async (article_id) => {
