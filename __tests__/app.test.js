@@ -323,6 +323,69 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
 
   });
+  describe("limit query", () => {
+    test("200: responds with 5 comments", () => {
+    return request(app).get(`/api/articles/1/comments?limit=5`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comments.length).toBe(5)
+      });
+    });
+    test("200: responds with 10 comments if limit is declared but undefined", () => {
+    return request(app).get(`/api/articles/1/comments?limit`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comments.length).toBe(10)
+      });
+    });
+    test("200: responds with 10 comments if limit is declared but invalid", () => {
+      return request(app).get(`/api/articles/1/comments?limit=jkl&p=1`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments.length).toBe(10)
+        });
+      });
+    test("200: responds with default behaviour if limit < 0", () => {
+      return request(app).get(`/api/aticles/1/comments?limit=-4`)
+    })
+    });
+  describe("p query", () => {
+    test("200: returns defaut behaviour without the limit query", () => {
+      return request(app).get(`/api/articles/1/comments?p=2`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(11);
+      });
+    });
+    test("200: reduces the number returned from the limit when running out of comments", () => {
+      return request(app).get(`/api/articles/1/comments?limit=5&p=3`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(1);
+        });
+    });
+    test("200: returns an empty array when the page number exceeds the number of comments", () => {
+      return request(app).get(`/api/articles/1/comments?limit=10&p=10`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(0);
+        });
+    });
+    test("200: defaults to page 1 if given an invalid p = jkl", () => {
+        return request(app).get(`/api/articles/1/comments?limit=10&p=jkl`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(10);
+        });
+    });
+    test("200: responds with default pg number if p < 0", () => {
+      return request(app).get(`/api/articles/1/comments?limit=10&p=-1`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments.length).toBe(10);
+      });
+    });
+  });
 });
 
 describe("GET /api/users", () => {

@@ -1,11 +1,12 @@
 const {
   convertTimestampToDate,
   formatComments,
-  articleLookup
+  articleLookup,
 } = require("../db/seeds/utils");
 
 const {
-  checkExists
+  checkExists,
+  paginationSql
 } = require("../server/utils");
 
 const db = require("../db/connection");
@@ -173,5 +174,61 @@ describe("checkExists", () => {
       expect(res.status).toBe(404);
       expect(res.msg).toBe("Resource not found");
     })
+  });
+});
+
+describe("paginationSql", () => {
+  describe("LIMIT", () => {
+    test("returns LIMIT = limit", () => {
+      const limit = 20;
+      const string = paginationSql(limit)
+      expect(string).toBe("LIMIT '20' OFFSET '0' ")
+    });
+    test("positive rational numbers", () => {
+      const limit = 5.4;
+      const string = paginationSql(limit);
+      expect(string).toBe("LIMIT '5' OFFSET '0' ");
+    });
+    test("returns LIMIT 10 when passed LIMIT < 0.51", () => {
+      const limit = 0.5
+      const string = paginationSql(limit)
+      expect(string).toBe("LIMIT '10' OFFSET '0' ")
+    });
+    test("returns LIMIT 10 when passed LIMIT = jkl", () => {
+      const pg_number = 1;
+      const limit = "jkl";
+      const string = paginationSql(limit)
+      expect(string).toBe("LIMIT '10' OFFSET '0' ")
+    });
+    test("returns '' when limit = undefined", () => {
+      const string = paginationSql();
+      expect(string).toBe("");
+    });
+  });
+  describe("pg_number", () => {
+    test("returns OFFSET as multiple of pg_number and limit", () => {
+      const pg_number = 3;
+      const limit = 5;
+      const string = paginationSql(limit,pg_number);
+      expect(string).toBe("LIMIT '5' OFFSET '10' ");
+    });
+    test("positive rational numbers", () => {
+      const pg_number = 3.4;
+      const limit = 5;
+      const string = paginationSql(limit,pg_number);
+      expect(string).toBe("LIMIT '5' OFFSET '10' ");
+    });
+    test("returns page number 1/ OFFSET = 0 when pg_number < 0", () => {
+      const pg_number = -1;
+      const limit = 5
+      const string = paginationSql(limit,pg_number)
+      expect(string).toBe("LIMIT '5' OFFSET '0' ")
+    });
+    test("returns OFFSET 0 when passed pg_number = jkl", () => {
+      const pg_number = "jkl";
+      const limit = 5
+      const string = paginationSql(limit,pg_number)
+      expect(string).toBe("LIMIT '5' OFFSET '0' ")
+    });
   });
 });

@@ -7,8 +7,7 @@ const {
 
 exports.getArticleComments = async (request, response, next) => {
     try {
-        const { article_id } = request.params;
-        const comments = await fetchArticleComments(article_id);
+        const comments = await fetchArticleComments(request.params, request.query);
         response.status(200).send({ comments });
         
     } catch (error) {

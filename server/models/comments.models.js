@@ -1,9 +1,19 @@
 const db = require("../../db/connection")
-const {checkExists} = require("../utils")
+const {
+    checkExists, 
+    paginationSql
+} = require("../utils");
+const format = require("pg-format");
 
-exports.fetchArticleComments = async (article_id) => {
-    await checkExists("articles", "article_id", article_id)
-    return (await db.query(`SELECT * FROM comments WHERE comments.article_id = $1`,[article_id])).rows;
+exports.fetchArticleComments = async (params, query) => {
+    const { article_id } = params;
+    const { limit, p } = query;
+    await checkExists("articles", "article_id", article_id);
+    let queryStr = format(`SELECT * FROM comments WHERE comments.article_id = %L`, article_id);
+
+    queryStr += paginationSql(limit, p);
+
+    return (await db.query(queryStr)).rows;
     
 };
 
