@@ -342,7 +342,10 @@ describe("POST /api/articles", () => {
   });
   test("404: author does not exist", () => {
     return request(app).post(`/api/articles`)
-    .send({author:"I am not an author"})
+    .send({
+      author:"I am not an author",
+      topic: 'mitch',
+    })
     .expect(404)
     .then(({body}) => {
       expect(body.msg).toBe('Resource not found');
@@ -350,7 +353,9 @@ describe("POST /api/articles", () => {
   });
   test('404: topic does not exist', () => {
     return request(app).post(`/api/articles`)
-    .send({topic:"I am not a topic"})
+    .send({
+      author: "butter bridge",
+      topic:"I am not a topic"})
     .expect(404)
     .then(({body}) => {
       expect(body.msg).toBe('Resource not found');
