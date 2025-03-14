@@ -33,7 +33,6 @@ exports.fetchArticles = async (queries) => {
 
 exports.fetchArticle = async (article_id) => {
     await checkExists('articles', 'article_id', article_id);
-    const comment_count = (await db.query)
     return (await db.query(`
         SELECT 
             articles.article_id, articles.author, articles.topic, articles.title, 
