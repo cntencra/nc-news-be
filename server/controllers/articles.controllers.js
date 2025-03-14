@@ -1,6 +1,7 @@
 const {
     fetchArticles,
     fetchArticle,
+    createArticle,
     amendArticle
 } = require("../models/articles.models");
 
@@ -23,6 +24,15 @@ exports.getArticle = async (request, response, next) => {
         next(error);
     };
 };
+
+exports.postArticle = async (request,response, next) => {
+    try {
+        const article = await createArticle(request.body);
+        response.status(201).send({ article })
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.patchArticle = async (request, response, next) => {
     try {
