@@ -1,6 +1,7 @@
 const {
     fetchArticleComments,
     createArticleComment,
+    amendComment,
     eliminateComment
 } = require("../models/comments.models")
 
@@ -26,6 +27,15 @@ exports.postArticleComment = async (request,response, next) => {
     };
 };
 
+exports.patchComment = async (request,response, next) => {
+    try {
+        const comment = await amendComment(request.params, request.body);
+        response.status(201).send({comment});
+    } catch (error) {
+        next(error);  
+    };
+};
+
 exports.deleteComment = async (request, response, next) => {
     try {
         const { comment_id } = request.params;
@@ -33,5 +43,5 @@ exports.deleteComment = async (request, response, next) => {
         response.status(204).send();
     } catch (error) {
         next(error);
-    }
-}
+    };
+};
