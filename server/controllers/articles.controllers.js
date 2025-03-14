@@ -7,8 +7,8 @@ const {
 
 exports.getArticles = async (request, response, next) => {
     try {
-        const articles = await fetchArticles(request.query);
-        response.status(200).send({ articles });
+        const { articles, total_count } = await fetchArticles(request.query);
+        response.status(200).send({ articles, total_count });
     } catch (error) {
         next(error);
     }

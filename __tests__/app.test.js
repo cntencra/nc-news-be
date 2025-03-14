@@ -169,7 +169,6 @@ describe("GET /api/articles", () => {
       });
     });
   });
-
   describe("generic queries", () => {
     test("200 ?not_a_key = mitch return default behaviour", () => {
       return request(app).get(`/api/articles?not_a_key=mitch`)
@@ -202,6 +201,76 @@ describe("GET /api/articles", () => {
       });
     });
   });
+
+  describe("limit query", () => {
+    test("200: responds with 5 articles", () => {
+    return request(app).get(`/api/articles?limit=5&p=1`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(5)
+      });
+    });
+    test("200: responds with 10 articles if limit is declared but undefined", () => {
+    return request(app).get(`/api/articles?limit&p=1`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(10)
+      });
+    });
+    test("200: responds with 10 articles if limit is declared but invalid", () => {
+      return request(app).get(`/api/articles?limit=jkl&p=1`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(10)
+        });
+      });
+    });
+    describe("p query", () => {
+      test("200: has no effect without the limit query", () => {
+        return request(app).get(`/api/articles?p=2`)
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(13);
+        });
+      });
+      test("200: reduces the number returned from the limit when running out of articles", () => {
+        return request(app).get(`/api/articles?limit=10&p=2`)
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(3);
+          });
+      });
+      test("200: returns an empty array when the page number exceeds the number of articles", () => {
+        return request(app).get(`/api/articles?limit=10&p=10`)
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(0);
+          });
+      });
+      test("200: defaults to page 1 if given an invalid p = jkl", () => {
+          return request(app).get(`/api/articles?limit=10&p=jkl`)
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(10);
+          });
+      });
+    });
+    describe("total_count", () => {
+      test("200: has a total_count property", () =>{
+        return request(app).get(`/api/articles?limit=10&p=1`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.total_count).toBe(13);
+        });
+      });
+      test("200: that is responsive to queries", () =>{
+        return request(app).get(`/api/articles?limit=10&p=1&topic=cats`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.total_count).toBe(1);
+        });
+      });
+    });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

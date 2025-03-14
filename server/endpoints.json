@@ -30,19 +30,21 @@
 
   "GET /api/articles": {
     "description": "serves an array of all articles, default sort by created_at",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
+          "article_id": 13,
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "title": "Another article about Mitch",
+          "body": "There will never be enough articles about Mitch!",
+          "created_at": "2020-10-11T11:24:00.000Z",
           "votes": 0,
-          "comment_count": 6
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
+      ],
+      "total_count": 1
     }
   },
 
@@ -76,6 +78,23 @@
     "queries": [],
     "exampleResponse": {
       "topics": { "user" : { "username": "user", "name": "Silent Bob", "avatar_url": "www.something.com/much_longer" }}
+    }
+  },
+
+  "POST /api/articles":{
+  "description": "POSTs an article to the articles table and serves the corresponding POSTed article",
+  "queries": [],
+  "exampleResponse":  {
+    "articles": {
+      "article_id": 13,
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "title": "Another article about Mitch",
+      "body": "There will never be enough articles about Mitch!",
+      "created_at": "2020-10-11T11:24:00.000Z",
+      "votes": 0,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    }
     }
   },
 
