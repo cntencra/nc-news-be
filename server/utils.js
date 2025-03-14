@@ -12,3 +12,20 @@ exports.checkExists = async (table, column, value) => {
 
     return true;
 };
+
+exports.paginationSql = ( limit, pgNumber ) => {
+    let paginationStr = '';
+    if (limit || limit === '') {
+        let offset = 0;
+        if(!isNaN(Number(pgNumber)) && !(pgNumber === '') && pgNumber >= 1) {
+            offset = Math.round(pgNumber) - 1;
+        };
+
+        if (isNaN(Number(limit)) || limit === ''|| limit <= 0.51) {
+            paginationStr += format(`LIMIT '10' OFFSET %L `,offset * 10);
+        } else {
+            paginationStr += format(`LIMIT %L OFFSET %L `, Math.round(limit), offset * Math.round(limit));
+        };
+    };
+    return paginationStr;
+};
