@@ -254,6 +254,13 @@ describe("GET /api/articles", () => {
             expect(body.articles.length).toBe(0);
           });
       });
+      test("200:defaults to OFFSET 0 if p < 0", () => {
+        return request(app).get(`/api/articles?limit=10&p=-1`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.articles.length).toBe(10);
+        });
+      });
       test("200: defaults to page 1 if given an invalid p = jkl", () => {
           return request(app).get(`/api/articles?limit=10&p=jkl`)
           .expect(200)
