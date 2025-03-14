@@ -435,6 +435,79 @@ describe("PATCH /api/articles/:article_id", () => {
   
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("201: comment votes incremented, comment returned", () => {
+    return request(app).patch(`/api/comments/1`)
+    .send({ inc_votes : 1})
+    .expect(201)
+    .then((response) => {
+      const { comment_id, article_id, body, votes, author, created_at } = response.body.comment;
+      expect(comment_id).toBe(1);
+      expect(typeof article_id).toBe('number');
+      expect(typeof body).toBe('string');
+      expect(votes).toBe(17);
+      expect(typeof author).toBe('string');
+      expect(typeof created_at).toBe('string');
+    });
+  });
+
+  test("201: comment votes decremented", () => {
+    return request(app).patch(`/api/comments/1`)
+    .send({ inc_votes : -1})
+    .expect(201)
+    .then((response) => {
+      const { votes } = response.body.comment;
+      expect(votes).toBe(15);
+    });
+  });
+
+  test("201: comment votes changed, extra keys ignored", () => {
+    return request(app).patch(`/api/comments/1`)
+    .send({inc_votes : 1, mo_keys: 56, even_mo_keys: 100})
+    .expect(201)
+    .then( ({body}) => {
+      expect(body.comment.votes).toBe(17)
+    });
+  });
+
+  test("201: No keys / inc_votes missing, votes stays the same", () => {
+    return request(app).patch(`/api/comments/1`)
+    .send({})
+    .expect(201)
+    .then( ({body}) => {
+      expect(body.comment.votes).toBe(16);
+    });
+  });
+
+  test("400: increment votes by ! typeof number", () => {
+    return request(app).patch(`/api/comments/1`)
+    .send({ inc_votes : 'hjg'})
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    });
+  })
+
+  test("400: comment_id = bananana | responds with 'Bad request' when passed an invalid comment_id", () => {
+    return request(app).patch(`/api/comments/bananana`)
+    .send({ inc_votes : 1})
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    });
+  });
+
+  test("404: responds with 'Not found' when passed a valid comment_id with no associated comment comment_id = 100", () => {
+    return request(app).patch(`/api/comments/100`)
+    .send({ inc_votes : 1})
+    .expect(404)
+    .then(( { body }) => {
+      expect(body.msg).toBe("Resource not found")
+    });
+  });
+  
+});
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: no content", () => {
     return request(app).delete(`/api/comments/2`)
