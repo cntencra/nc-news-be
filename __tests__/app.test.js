@@ -289,6 +289,80 @@ describe("GET /api/users/:username", () => {
   });
 });
 
+describe("POST /api/articles", () => {
+  test("201: post an article utilising default parameters", () => {
+    return request(app).post(`/api/articles`)
+    .send({
+      author: "butter_bridge",
+      title: "New title",
+      body: "I like to test out my comedy chops by writing funny tests",
+      topic: 'mitch',
+      article_img_url: "https://imgur.com/gallery/heckin-bamboozled-i-was-nh9BEVV#/t/funny"
+    })
+    .expect(201)
+    .then(( response) => {
+      const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = response.body.article;
+      expect(typeof article_id).toBe('number');
+      expect(author).toBe("butter_bridge");
+      expect(topic).toBe('mitch');
+      expect(title).toBe("New title");
+      expect(typeof created_at).toBe('string');
+      expect(typeof votes).toBe('number');
+      expect(article_img_url).toBe("https://imgur.com/gallery/heckin-bamboozled-i-was-nh9BEVV#/t/funny");
+      expect(typeof comment_count).toBe('number');
+      expect(body).toBe("I like to test out my comedy chops by writing funny tests");
+    });
+  });
+  test("201: body and img_url need not be defined", () => {
+    return request(app).post(`/api/articles`)
+    .send({
+      author: "butter_bridge",
+      title: "New title",
+      topic: 'mitch',
+    })
+    .expect(201)
+    .then(( response) => {
+      const {article_img_url, body } = response.body.article;
+      expect(article_img_url).toBe(null);
+      expect(body).toBe(null);
+    });
+  });
+  test("400 title not defined", () => {
+    return request(app).post(`/api/articles`)
+    .send({
+      author: "butter_bridge",
+      body: "I like to test out my comedy chops by writing funny tests",
+      topic: 'mitch',
+      article_img_url: "https://imgur.com/gallery/heckin-bamboozled-i-was-nh9BEVV#/t/funny"
+    })
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("NOT NULL VIOLATION")
+    });
+  });
+  test("404: author does not exist", () => {
+    return request(app).post(`/api/articles`)
+    .send({
+      author:"I am not an author",
+      topic: 'mitch',
+    })
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('Resource not found');
+    });
+  });
+  test('404: topic does not exist', () => {
+    return request(app).post(`/api/articles`)
+    .send({
+      author: "butter bridge",
+      topic:"I am not a topic"})
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('Resource not found');
+    });
+  });
+});
+
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds a comment to comment table, responds with the added comment, author is a known author", () => {
     return request(app).post(`/api/articles/1/comments`)

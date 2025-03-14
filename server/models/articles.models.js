@@ -44,6 +44,33 @@ exports.fetchArticle = async (article_id) => {
         GROUP BY articles.article_id;`, [article_id])).rows[0];
 };
 
+exports.createArticle = async (body) => {
+    
+    const {author, title, topic , article_img_url} = body;
+    await checkExists('users','username', author);
+    await checkExists('topics','slug', topic);
+    
+    return (await db.query(`
+        WITH new_article AS (
+            INSERT INTO articles
+                (author,title, body, topic,article_img_url)
+            VALUES
+                ($1, $2,$3,$4,$5)
+        RETURNING *
+        )
+        SELECT 
+            new_article.article_id, new_article.author, new_article.topic, new_article.title, 
+            new_article.body, new_article.created_at, new_article.votes, 
+            new_article.article_img_url, CAST(COALESCE(COUNT(comments.comment_id),0) AS INT )AS  comment_count
+        FROM new_article
+        LEFT JOIN comments ON comments.article_id = new_article.article_id
+        GROUP BY 
+            new_article.article_id, new_article.author, new_article.topic, new_article.title, 
+            new_article.body, new_article.created_at, new_article.votes, 
+            new_article.article_img_url`
+            , [author, title, body.body, topic , article_img_url])).rows[0];
+};
+
 exports.amendArticle = async (article_id, body) => {
     await checkExists('articles', 'article_id', article_id);
     const { inc_votes } = body;
