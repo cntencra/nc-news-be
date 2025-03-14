@@ -16,7 +16,6 @@ exports.getUser = async ( request , response, next ) => {
     try {
         const { username } = request.params
         const user = await fetchUser(username);
-        console.log(user);
         response.status(200).send({user});  
     } catch (error) {
         next(error);
