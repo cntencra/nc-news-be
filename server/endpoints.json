@@ -60,6 +60,13 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "serves a username of all users",
+    "queries": [],
+    "exampleResponse": {
+      "topics": { "user" : { "username": "user", "name": "Silent Bob", "avatar_url": "www.something.com/much_longer" }}
+    }
+  },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
