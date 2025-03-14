@@ -204,12 +204,19 @@ describe("GET /api/articles", () => {
 
   describe("limit query", () => {
     test("200: responds with 5 articles", () => {
-    return request(app).get(`/api/articles?limit=5&p=1`)
+    return request(app).get(`/api/articles?limit=5`)
     .expect(200)
     .then(({body}) => {
       expect(body.articles.length).toBe(5)
       });
     });
+    test("200: responds with 10 if limit < 0", () => {
+      return request(app).get(`/api/articles?limit=-5`)
+      .expect(200)
+      .then(({body}) => {
+      expect(body.articles.length).toBe(10)
+      });
+    })
     test("200: responds with 10 articles if limit is declared but undefined", () => {
     return request(app).get(`/api/articles?limit&p=1`)
     .expect(200)
@@ -306,7 +313,6 @@ describe("GET /api/articles/:article_id/comments", () => {
     .then(({ body }) => {
       expect(body.msg).toBe('Bad request')
     });
-
   });
 
   test("404: responds with 'Not found' when passed a valid article_id with no associated article", () => {
