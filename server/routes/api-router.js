@@ -7,7 +7,7 @@ const apiCommentsRouter = require("./api-comments-router.js");
 const endpointsJson = require("../endpoints.json");
 
 
-apiRouter.get("/",(request, response) => {
+apiRouter.get("",(request, response) => {
     response.status(200).send({ endpoints: endpointsJson });
 });
 
