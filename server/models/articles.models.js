@@ -4,7 +4,7 @@ const format = require("pg-format");
 
 exports.fetchArticles = async (queries) => {
     const allowedOrder = ["asc", "desc"];
-    const { order, topic } = queries;
+    const { order, topic, limit, p } = queries;
 
     if (topic) await checkExists('topics', 'slug', topic);
     
@@ -12,23 +12,42 @@ exports.fetchArticles = async (queries) => {
         SELECT 
             articles.article_id, articles.author, articles.topic, 
             articles.title, articles.created_at, articles.votes, 
-            articles.article_img_url, CAST(COALESCE(COUNT(comments.comment_id),0) AS INT )AS  comment_count
+            articles.article_img_url,
+            CAST(COALESCE(COUNT(comments.comment_id),0) AS INT )AS  comment_count
 
         FROM articles
         LEFT JOIN comments ON comments.article_id = articles.article_id `
     
     if(topic) {
-        queryStr += format(`WHERE topic =%L`,topic)
+        queryStr += format(`WHERE topic = %L`,topic)
     }
 
     queryStr += `GROUP BY articles.article_id `
         
     if(!allowedOrder.includes(order))    
-        queryStr += `ORDER BY articles.created_at DESC;`;
+        queryStr += `ORDER BY articles.created_at DESC `;
     else {
-        queryStr += format(`ORDER BY articles.created_at %s`, order);
+        queryStr += format(`ORDER BY articles.created_at %s `, order);
     }
-    return (await db.query(queryStr)).rows
+
+    const total_count = (await db.query(queryStr)).rows.length
+
+    if (limit || limit === '') {
+        let offset = 0
+        if(!isNaN(Number(p)) && !(p === '') && p >= 1) {
+            offset = Math.round(p) - 1;
+        };
+
+        if (isNaN(Number(limit)) || limit === '') {
+            queryStr += format(`LIMIT 10 OFFSET %L `,offset * 10);
+        } else {
+            queryStr += format(`LIMIT %L OFFSET %L `, limit, offset * limit);
+        };
+    };
+
+    const articles = ( await db.query(queryStr) ).rows;
+    
+    return {articles, total_count}
 };
 
 exports.fetchArticle = async (article_id) => {
