@@ -257,6 +257,29 @@ describe("GET /api/users", () => {
   });
 });
 
+describe("GET /api/users/:username", () => {
+  test("200: responds with a user when provided a valid username", () => {
+    return request(app).get(`/api/users/butter_bridge`)
+    .expect(200)
+    .then((response) => {
+      const { username, name, avatar_url } = response.body.user;
+      expect(username).toBe('butter_bridge');
+      expect(typeof name).toBe('string');
+      expect(typeof avatar_url).toBe('string');
+    });
+  });
+
+  test("404: responds with 'Not found' when passed a valid username with no associated content", () => {
+    
+    return request(app).get(`/api/users/9999`)
+    .expect(404)
+    .then(( { body }) => {
+      expect(body.msg).toBe("Resource not found")
+    });
+
+  });
+});
+
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: adds a comment to comment table, responds with the added comment, author is a known author", () => {
     return request(app).post(`/api/articles/1/comments`)
