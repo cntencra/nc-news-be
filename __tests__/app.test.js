@@ -152,6 +152,15 @@ describe("GET /api/articles", () => {
         });
       });
     });
+
+    test("200: filter by topic but no articles", () => {
+      return request(app).get(`/api/articles?topic=paper`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(0);
+      });
+    });
+
     test("404: Resource not found topic=I am not a topic", () => {
       return request(app).get(`/api/articles?topic=i_am_not_a_topic`)
       .expect(404)
