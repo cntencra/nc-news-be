@@ -434,7 +434,7 @@ describe("GET /api/users/:username", () => {
   });
 });
 
-describe.only("POST /api/topics", () => {
+describe("POST /api/topics", () => {
   test("201: post a topic", () => {
     return request(app).post(`/api/topics`)
     .send({
