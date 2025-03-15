@@ -4,7 +4,8 @@ const {
     getArticles,
     getArticle,
     postArticle,
-    patchArticle
+    patchArticle,
+    deleteArticle
 } = require("../controllers/articles.controllers.js");
 
 const {
@@ -23,8 +24,10 @@ apiArticlesRouter.post('', postArticle);
 
 apiArticlesRouter.post(`/:article_id/comments`, postArticleComment);
 
-apiArticlesRouter.patch(`/:article_id`, patchArticle)
+apiArticlesRouter.patch(`/:article_id`, patchArticle);
+
+apiArticlesRouter.delete('/:article_id', deleteArticle);
 
 
 
-module.exports = apiArticlesRouter
+module.exports = apiArticlesRouter;
