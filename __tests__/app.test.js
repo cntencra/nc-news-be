@@ -434,6 +434,45 @@ describe("GET /api/users/:username", () => {
   });
 });
 
+describe("POST /api/topics", () => {
+  test("201: post a topic", () => {
+    return request(app).post(`/api/topics`)
+    .send({
+      "slug": "dogs",
+      "description": "The superior pet",
+      "img_url": "www.img_url.com"
+    })
+    .expect(201)
+    .then(({body}) => {
+      const { slug, description, img_url } = body.topic
+      expect(slug).toBe("dogs");
+      expect(description).toBe("The superior pet");
+      expect(img_url).toBe("www.img_url.com");
+    });
+  });
+  test("201: only requires a slug", () => {
+    return request(app).post(`/api/topics`)
+    .send({
+      "slug": "dogs",
+    })
+    .expect(201)
+    .then(({body}) => {
+      const { slug, description, img_url } = body.topic
+      expect(slug).toBe("dogs");
+      expect(description).toBe(null);
+      expect(img_url).toBe(null);
+    });
+  });
+  test("400: slug not defined", () => {
+    return request(app).post(`/api/topics`)
+    .send({})
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("NOT NULL VIOLATION");
+    });
+  });
+});
+
 describe("POST /api/articles", () => {
   test("201: post an article utilising default parameters", () => {
     return request(app).post(`/api/articles`)
