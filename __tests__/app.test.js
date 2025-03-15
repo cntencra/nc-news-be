@@ -450,6 +450,23 @@ describe("POST /api/topics", () => {
       expect(img_url).toBe("www.img_url.com");
     });
   });
+  test("201: extra keys", () => {
+    return request(app).post(`/api/topics`)
+    .send({
+      "slug": "dogs",
+      "description": "The superior pet",
+      "img_url": "www.img_url.com",
+      "extra_key": "I do nothing"
+    })
+    .expect(201)
+    .then(({body}) => {
+      const { slug, description, img_url, extra_key } = body.topic
+      expect(slug).toBe("dogs");
+      expect(description).toBe("The superior pet");
+      expect(img_url).toBe("www.img_url.com");
+      expect(extra_key).toBe(undefined);
+    });
+  });
   test("201: only requires a slug", () => {
     return request(app).post(`/api/topics`)
     .send({
