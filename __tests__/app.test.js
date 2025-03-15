@@ -813,7 +813,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
-describe.only("DELETE /api/articles/:article_id", () => {
+describe("DELETE /api/articles/:article_id", () => {
   test("204: no content returned", () => {
     return request(app).delete(`/api/articles/1`)
     .expect(204);
