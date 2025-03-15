@@ -812,3 +812,24 @@ describe("DELETE /api/comments/:comment_id", () => {
     });
   });
 });
+
+describe.only("DELETE /api/articles/:article_id", () => {
+  test("204: no content returned", () => {
+    return request(app).delete(`/api/articles/1`)
+    .expect(204);
+  });
+  test("400: article_id = banananan", () => {
+    return request(app).delete(`/api/articles/bananan`)
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad request")
+    });
+  });
+  test("204: no content returned", () => {
+    return request(app).delete(`/api/articles/9999`)
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Resource not found");
+    });
+  });
+});
