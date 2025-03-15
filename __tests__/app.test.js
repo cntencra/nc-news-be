@@ -528,6 +528,28 @@ describe("POST /api/articles", () => {
       expect(body).toBe(null);
     });
   });
+  test("201: extra_keys", () => {
+    return request(app).post(`/api/articles`)
+    .send({
+      author: "butter_bridge",
+      title: "New title",
+      topic: 'mitch',
+      extra_key: "I am an extra key"
+    })
+    .expect(201)
+    .then(( response) => {
+      const { article_id, author, topic, title, created_at, votes, article_img_url, comment_count, body } = response.body.article;
+      expect(typeof article_id).toBe('number');
+      expect(author).toBe("butter_bridge");
+      expect(topic).toBe('mitch');
+      expect(title).toBe("New title");
+      expect(typeof created_at).toBe('string');
+      expect(typeof votes).toBe('number');
+      expect(article_img_url).toBe(null);
+      expect(typeof comment_count).toBe('number');
+      expect(body).toBe(null);
+    });
+  });
   test("400 title not defined", () => {
     return request(app).post(`/api/articles`)
     .send({
