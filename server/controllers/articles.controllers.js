@@ -1,8 +1,10 @@
+const { request } = require("../app");
 const {
     fetchArticles,
     fetchArticle,
     createArticle,
-    amendArticle
+    amendArticle,
+    eliminateArticle
 } = require("../models/articles.models");
 
 exports.getArticles = async (request, response, next) => {
@@ -43,4 +45,13 @@ exports.patchArticle = async (request, response, next) => {
         next(error)
     }
 
+}
+
+exports.deleteArticle = async (request,response, next) => {
+    try {
+        await eliminateArticle(request.params);
+        response.status(204).send();
+    } catch (error) {
+        next(error);
+    };
 }

@@ -106,3 +106,10 @@ exports.amendArticle = async (article_id, body) => {
     return(await db.query(queryStr,params)).rows[0]
 
 }
+
+exports.eliminateArticle = async (params) => {
+    const { article_id } = params
+    await db.query(`DELETE FROM comments WHERE article_id = $1`,[article_id])
+    await checkExists("articles", "article_id", article_id);
+    await db.query(`DELETE FROM articles WHERE article_id = $1`,[article_id]);
+}
