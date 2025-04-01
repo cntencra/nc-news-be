@@ -115,7 +115,7 @@
 
   "PATCH /api/articles/:article_id" : {
   "description": "PATCHs an articles vote property on the articles table and serves an article corresponding to the PATCHed article",
-  "queries": [],
+  "queries": [{"inc_votes": 1}],
   "exampleResponse":  { "article": {
         "article_id": 13,
         "topic": "mitch",
