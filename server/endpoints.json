@@ -143,8 +143,12 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id" : {
+    "description": "deletes an article, returns nothing",
+    "queries": []
+  },
 
-  "DELETE /api/articles/:comment_id" : {
+  "DELETE /api/comments/:comment_id" : {
     "description": "deletes a comment, returns nothing",
     "queries": []
   }
