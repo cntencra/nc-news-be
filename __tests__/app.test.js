@@ -353,7 +353,11 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
     test("200: responds with default behaviour if limit < 0", () => {
-      return request(app).get(`/api/aticles/1/comments?limit=-4`)
+      return request(app).get(`/api/articles/1/comments?limit=-4`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments.length).toBe(10)
+        });
     })
     });
   describe("p query", () => {
@@ -433,6 +437,99 @@ describe("GET /api/users/:username", () => {
 
   });
 });
+
+describe("Get /api/comments/:username", ()=> {
+  test("200: responds with all users comments when provided a valid username", () => {
+    return request(app).get(`/api/comments/butter_bridge`)
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.comments.length).toBe(5)
+      body.comments.forEach((comment) => {
+        const { comment_id, votes, created_at, author, body, article_id } = comment;
+        expect(typeof comment_id).toBe('number');
+        expect(typeof votes).toBe('number');
+        expect(typeof created_at).toBe('string');
+        expect(author).toBe('butter_bridge');
+        expect(typeof body).toBe('string');
+        expect(typeof article_id).toBe('number');
+      })
+      });
+  });
+
+  test("404: responds with 'Not found' when passed a valid username with no associated content", () => {
+    
+    return request(app).get(`/api/comments/never_a_user`)
+    .expect(404)
+    .then(( { body }) => {
+      expect(body.msg).toBe("Resource not found")
+    });
+
+  });
+
+  describe("limit query", () => {
+    test("200: responds with 5 comments", () => {
+    return request(app).get(`/api/comments/butter_bridge?limit=5`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comments.length).toBe(5)
+      });
+    });
+    test("200: responds with 10 comments if limit is declared but undefined", () => {
+    return request(app).get(`/api/comments/icellusedkars?limit=`)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comments.length).toBe(10)
+      });
+    });
+    test("200: responds with 10 comments if limit is declared but invalid", () => {
+      return request(app).get(`/api/comments/icellusedkars?limit==jkl&p=1`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments.length).toBe(10)
+        });
+      });
+    test("200: responds with default behaviour if limit < 0", () => {
+      return request(app).get(`/api/comments/icellusedkars?limit=-4`)
+    })
+    });
+  describe("p query", () => {
+    test("200: returns defaut behaviour without the limit query", () => {
+      return request(app).get(`/api/comments/icellusedkars?limit=?p=2`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(10);
+      });
+    });
+    test("200: reduces the number returned from the limit when running out of comments", () => {
+      return request(app).get(`/api/comments/icellusedkars?limit=?limit=5&p=2`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(3);
+        });
+    });
+    test("200: returns an empty array when the page number exceeds the number of comments", () => {
+      return request(app).get(`/api/comments/icellusedkars?limit=?limit=10&p=10`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(0);
+        });
+    });
+    test("200: defaults to page 1 if given an invalid p = jkl", () => {
+        return request(app).get(`/api/comments/icellusedkars?limit=?limit=10&p=jkl`)
+        .expect(200)
+        .then(({body}) => {
+          expect(body.comments.length).toBe(10);
+        });
+    });
+    test("200: responds with default pg number if p < 0", () => {
+      return request(app).get(`/api/comments/icellusedkars?limit=?limit=10&p=-1`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments.length).toBe(10);
+      });
+    });
+  });
+})
 
 describe("POST /api/topics", () => {
   test("201: post a topic", () => {
