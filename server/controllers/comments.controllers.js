@@ -1,9 +1,20 @@
 const {
+    fetchComments,
     fetchArticleComments,
     createArticleComment,
     amendComment,
     eliminateComment
 } = require("../models/comments.models")
+
+exports.getComments = async (request,response,next) => {
+    try {
+        const comments = await fetchComments(request.params, request.query);
+        response.status(200).send({ comments });
+        
+    } catch (error) {
+        next(error);
+    };
+};
 
 exports.getArticleComments = async (request, response, next) => {
     try {

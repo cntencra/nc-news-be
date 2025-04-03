@@ -5,6 +5,17 @@ const {
 } = require("../utils");
 const format = require("pg-format");
 
+exports.fetchComments = async (params, query) => {
+    const { username } = params;
+    const { limit, p } = query;
+    await checkExists("users", "username", username);
+    let queryStr = format(`SELECT * FROM comments WHERE comments.author= %L`, username);
+    queryStr += paginationSql(limit, p);
+
+    return (await db.query(queryStr)).rows;
+    
+};
+
 exports.fetchArticleComments = async (params, query) => {
     const { article_id } = params;
     const { limit, p } = query;
