@@ -20,7 +20,7 @@ GET endpoints for news site. Database contains tables
 ```bash
 cd ~/path_to_dir/
 
-git clone https://github.com/user/nc-news.git
+git clone https://github.com/user/nc-news-be.git
 ``` 
 ## Install dependencies, 
 ```bash
