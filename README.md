@@ -1,6 +1,6 @@
 # NC News
 
-[NC news hosted by render](https://chris-nc-news.onrender.com/) 
+[NC news hosted by render](https://chris-nc-news.onrender.com/api) 
 
 /api details possible endpoints
 
