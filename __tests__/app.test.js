@@ -161,6 +161,13 @@ describe("GET /api/articles", () => {
         expect(body.articles).toBeSortedBy('votes',{ descending: false });
       });
     });
+    test("200:sort by comment_count ascending", () => {
+      return request(app).get(`/api/articles?sort_by=comment_count&order=asc`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('comment_count',{ descending: false });
+      });
+    });
   });
   describe("filter by queries", () => {
     test("200: filter by topic", () => {

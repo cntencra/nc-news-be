@@ -8,7 +8,7 @@ const format = require("pg-format");
 exports.fetchArticles = async (queries) => {
     const allowedOrder = ["asc", "desc"];
     const allowedSortBy = 
-    ["article_id", "topic", "author", "body", "created_at", "votes"]
+    ["article_id", "topic", "author", "body", "created_at", "votes", "comment_count"]
     const { order, topic, limit, p, sort_by } = queries;
 
     if (topic) await checkExists('topics', 'slug', topic);
