@@ -7,7 +7,9 @@ const format = require("pg-format");
 
 exports.fetchArticles = async (queries) => {
     const allowedOrder = ["asc", "desc"];
-    const { order, topic, limit, p } = queries;
+    const allowedSortBy = 
+    ["article_id", "topic", "author", "body", "created_at", "votes"]
+    const { order, topic, limit, p, sort_by } = queries;
 
     if (topic) await checkExists('topics', 'slug', topic);
     
@@ -26,11 +28,18 @@ exports.fetchArticles = async (queries) => {
     };
 
     queryStr += `GROUP BY articles.article_id `
+
+    if (sort_by && allowedSortBy.includes(sort_by)) {
+        queryStr += format(`ORDER BY %I `, sort_by);
+    }
+    else {
+        queryStr += format(`ORDER BY articles.created_at`);
+    }
         
     if(!allowedOrder.includes(order))    
-        queryStr += `ORDER BY articles.created_at DESC `;
+        queryStr += ` DESC `;
     else {
-        queryStr += format(`ORDER BY articles.created_at %s `, order);
+        queryStr += format(` %s `, order);
     };
 
     const total_count = (await db.query(queryStr)).rows.length;

@@ -140,6 +140,27 @@ describe("GET /api/articles", () => {
         expect(body.articles).toBeSortedBy('created_at',{ descending: true });
       });
     });
+    test("200:sort by article_id descending", () => {
+      return request(app).get(`/api/articles?sort_by=article_id`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('article_id',{ descending: true });
+      });
+    });
+    test("200:sort by created_at ascending", () => {
+      return request(app).get(`/api/articles?sort_by=created_at&order=asc`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('created_at',{ descending: false });
+      });
+    });
+    test("200:sort by votes ascending", () => {
+      return request(app).get(`/api/articles?sort_by=votes&order=asc`)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('votes',{ descending: false });
+      });
+    });
   });
   describe("filter by queries", () => {
     test("200: filter by topic", () => {
