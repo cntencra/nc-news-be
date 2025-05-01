@@ -2,9 +2,8 @@
 
 [NC news hosted by render](https://chris-nc-news.onrender.com/api) 
 
-/api details possible endpoints
 
-GET endpoints for news site. Database contains tables
+GET endpoints for news site.
 - articles \
 /api/articles \
 /api/articles/:article_id
