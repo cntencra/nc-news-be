@@ -5,7 +5,7 @@
 
 GET endpoints for news site.
 
-- /api/articles \
+- /api/articles
 - /api/articles/:article_id
 
 - /api/topics
