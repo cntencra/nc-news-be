@@ -4,16 +4,16 @@
 
 
 GET endpoints for news site.
-- articles \
-/api/articles \
-/api/articles/:article_id
-- topics \
-/api/topics
-- users \
-/api/users
-- comments \
-/api/comments/:comment_id \
-/api/articles/:article_id/comments
+
+- /api/articles \
+- /api/articles/:article_id
+
+- /api/topics
+
+- /api/users
+
+- /api/comments/:comment_id \
+- /api/articles/:article_id/comments
 
 ## Clone the repo
 ```bash
