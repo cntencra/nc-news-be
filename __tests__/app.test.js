@@ -296,6 +296,28 @@ describe("GET /api/articles", () => {
             expect(body.articles.length).toBe(10);
           });
       });
+      test("200: returns valid data when all queries are applied", () => {
+        return request(app).get(`/api/articles/?topic=cats&order=desc&sort_by=votes&limit=5&p=1`)
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(1)
+          });
+      });
+      test("200: returns an ordered list with sort_by query", () => {
+        return request(app).get(`/api/articles/?topic=mitch&order=desc&sort_by=votes&limit=5&p=1`)
+          .expect(200)
+          .then(({body:{articles}}) => {
+            articles
+          });
+      });
+
+      test("200: returns an ordered list with sort_by query", () => {
+        return request(app).get(`/api/articles/?topic=mitch&order=desc&sort_by=votes&limit=5&p=3`)
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(2)
+          });
+      });
     });
     describe("total_count", () => {
       test("200: has a total_count property", () =>{
