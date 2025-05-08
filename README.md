@@ -1,26 +1,25 @@
 # NC News
 
-[NC news hosted by render](https://chris-nc-news.onrender.com/) 
+[NC news hosted by render](https://chris-nc-news.onrender.com/api) 
 
-/api details possible endpoints
 
-GET endpoints for news site. Database contains tables
-- articles \
-/api/articles \
-/api/articles/:article_id
-- topics \
-/api/topics
-- users \
-/api/users
-- comments \
-/api/comments/:comment_id \
-/api/articles/:article_id/comments
+GET endpoints for news site.
+
+- /api/articles
+- /api/articles/:article_id
+
+- /api/topics
+
+- /api/users
+
+- /api/comments/:comment_id \
+- /api/articles/:article_id/comments
 
 ## Clone the repo
 ```bash
 cd ~/path_to_dir/
 
-git clone https://github.com/user/nc-news.git
+git clone https://github.com/user/nc-news-be.git
 ``` 
 ## Install dependencies, 
 ```bash
