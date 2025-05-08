@@ -30,14 +30,10 @@ exports.fetchArticles = async (queries) => {
     queryStr += `GROUP BY articles.article_id `
 
     if (sort_by && allowedSortBy.includes(sort_by)) {
-        if (sort_by === 'article_id') {
-            queryStr += `ORDER BY article_id `;
-        } else {
-            queryStr += format(`ORDER BY %I , articles.article_id `, sort_by);
-        }
+        queryStr += format(`ORDER BY %I `, sort_by);
     }
     else {
-        queryStr += `ORDER BY articles.created_at `;
+        queryStr += `ORDER BY articles.created_at`;
     }
         
     if(!allowedOrder.includes(order))    
@@ -45,6 +41,10 @@ exports.fetchArticles = async (queries) => {
     else {
         queryStr += format(` %s `, order);
     };
+
+    if(sort_by && allowedSortBy.includes(sort_by) && sort_by !== 'article_id') {
+        queryStr += ', articles.article_id '
+    }
 
     const total_count = (await db.query(queryStr)).rows.length;
 
