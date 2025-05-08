@@ -30,10 +30,14 @@ exports.fetchArticles = async (queries) => {
     queryStr += `GROUP BY articles.article_id `
 
     if (sort_by && allowedSortBy.includes(sort_by)) {
-        queryStr += format(`ORDER BY %I `, sort_by);
+        if (sort_by === 'article_id') {
+            queryStr += `ORDER BY article_id `;
+        } else {
+            queryStr += format(`ORDER BY %I , articles.article_id `, sort_by);
+        }
     }
     else {
-        queryStr += format(`ORDER BY articles.created_at`);
+        queryStr += `ORDER BY articles.created_at `;
     }
         
     if(!allowedOrder.includes(order))    
